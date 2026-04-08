@@ -16,23 +16,32 @@ included in each release.
 Install TopHat from the [GNOME Shell extensions
 page](https://extensions.gnome.org/extension/5219/tophat/).
 
+Most Debian-based systems (including Ubuntu and Pop!_OS) will also need
+'gir1.2-gtop-2.0' to be installed. Usually this means running the command
+`sudo apt install gir1.2-gtop-2.0` followed by a system restart.
+
 ### Requirements
 
-- GNOME 45 or newer (older releases of TopHat are available for GNOME 3.32 -
-  44 in the legacy branch at https://github.com/fflewddur/tophat/tree/legacy)
-- A modestly recent release of the Linux kernel (anything >= 5.0 should work)
-- NetworkManager (to monitor network devices)
+- GNOME 3.32 or newer
+- The gtop system monitoring library (e.g., 'libgtop' on Debian-based systems,
+  likely already installed as part of GNOME)
+- GIRepository (gir) bindings for the gtop system monitoring library (e.g.,
+  'gir1.2-gtop-2.0' on Debian-based systems)
 
 ### Compatibility
 
 The latest release of TopHat has been tested on the following systems:
 
 - Arch Linux
-- Debian Trixie
-- Fedora 42
-- Red Hat Enterprise Linux 10
-- Ubuntu 24.04 LTS
-- Ubuntu 25.04
+- CentOS Stream 8
+- CentOS Stream 9
+- Debian 11.7 (first install gir1.2-gtop-2.0 package)
+- Debian 12 (first install gir1.2-gtop-2.0 package)
+- Fedora 38
+- openSUSE Leap 15.4 (first install typelib-1_0-GTop-2_0 package)
+- Pop!_OS 22.04 LTS (first install gir1.2-gtop-2.0 package)
+- Ubuntu 22.04 LTS (first install gir1.2-gtop-2.0 package)
+- Ubuntu 23.04 (first install gir1.2-gtop-2.0 package)
 
 Even if your system is not in this list, as long as it meets the
 requirements mentioned above, you should be able to run TopHat. If not, please
@@ -46,29 +55,15 @@ GNOME Shell extensions, you can manually install TopHat by following these
 steps. You may need to install the `unzip` and `gnome-extensions-app`
 utilities first.
 
-1. Download the latest TopHat release from
+1) Download the latest TopHat release from
    https://github.com/fflewddur/tophat/releases.
-2. Ensure your local extension directory exists by running the command `mkdir
--p ~/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io`.
-3. Extract the TopHat ZIP file into your local extension directory with the
+2) Ensure your local extension directory exists by running the command `mkdir
+   -p ~/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io`.
+3) Extract the TopHat ZIP file into your local extension directory with the
    command `unzip [path-to-tophat.zip] -d
-~/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io`
-4. Log out of your computer and log back in (or restart your system).
-5. Enable TopHat with the command `gnome-extensions enable tophat@fflewddur.github.io`.
-
-## Settings
-
-All of TopHat's settings are displayed in its preferences window, and this is the recommended approach for modifying them. If, however, you need to work with these from the command like, you can use the `gsettings` tools to read and modify them. To view all available settings and their current values, use the command:
-
-```
-gsettings --schemadir ~/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io/schemas list-recursively org.gnome.shell.extensions.tophat
-```
-
-Settings can be adjusted with the command:
-
-```
-gsettings --schemadir ~/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io/schemas set org.gnome.shell.extensions.tophat [key] [value]
-```
+   ~/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io`
+4) Log out of your computer and log back in (or restart your system).
+5) Enable TopHat in the `gnome-extensions-app`.
 
 ## Contributing
 
@@ -76,40 +71,26 @@ Contributions to improve TopHat are welcome! To avoid duplicate work, check
 [the issue tracker](https://github.com/fflewddur/tophat/issues) first. If an
 issue doesn't already exist for your idea, please create one.
 
-TopHat uses Yarn to manage dependencies and define development tasks. Learn
-how to install Yarn at https://yarnpkg.com/getting-started/install.
-
-`yarn`: Install project dependencies.  
-`yarn build`: Build the project.  
-`yarn lint`: Check for common problems.  
-`yarn lint:fix`: Fix common problems found by ESLint.  
-`yarn format`: Run Prettier to keep the project's coding style consistent.
-
-To keep the code format consistent, please use run `yarn lint && yarn format`
-before submitting a PR. If you use VS Code, consider installing the
-ESLint and Prettier extensions to automatically run these tools for you.
+To keep the code format consistent, please use `eslint` before submitting a
+PR. You can install eslint by running the command `npm install eslint` from
+the TopHat repo directory. To run the linter, use the command
+`./node_modules/eslint/bin/eslint.js . --ext .js`; alternatively, the ESLint
+plugin for VS Code will automatically run the linter for you.
 
 ### Useful development commands
 
-To view logs for GNOME Shell:
+To view GNOME Shell logs output: `journalctl -f -o cat /usr/bin/gnome-shell`
 
-    journalctl -f /usr/bin/gnome-shell
+To view logs for extension preferences: `journalctl -f -o cat /usr/bin/gjs`
 
-To view logs for extension preferences:
-
-    journalctl -f /usr/bin/gjs
-
-To simulate heavy system load, use the `stress-ng` tool, e.g.:
-
-    stress-ng --timeout 10s --cpu 8
-    stress-ng --vm-bytes 80% --vm-populate -t 30 -vm 4
+To simulate heavy system load, use the `stress-ng` tool, e.g. `stress-ng
+--timeout 10s --cpu 8` or `stress-ng --vm-bytes 80% --vm-populate -t 30 -vm
+4`.
 
 To test the development version:
 
-    cd [path to tophat repo]
-    yarn build
     mkdir -p ~/.local/share/gnome-shell/extensions/
-    ln -s [path to tophat repo]/dist ~/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io
+    ln -s [path to tophat repository]/tophat@fflewddur.github.io ~/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io
 
 ## License
 
@@ -133,10 +114,10 @@ The authors of each original work are:
 
 icons/cpu.svg: [jai](https://thenounproject.com/jairam.182/)  
 icons/disk.svg: [guntur cahya](https://thenounproject.com/gunturcahya05/)  
-icons/logo.svg: [Sergey Krivoy](https://thenounproject.com/krivoydesigner/)  
+icons/logo.svg: [Sergey Krivoy](https://thenounproject.com/krivoydesigner/)
 icons/mem.svg: [Loudoun Design
 Co.](https://thenonproject.com/LoudounDesignCo/)  
-icons/net.svg: [Pixel Bazaar](https://thenounproject.com/pixelbazaar/)
+icons/net.svg: [Pixel Bazaar](https://thenounproject.com/pixelbazaar/)  
 
 All icons were edited to make them more legible at small sizes.
 
